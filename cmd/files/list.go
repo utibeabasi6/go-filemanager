@@ -6,8 +6,8 @@ package files
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -18,18 +18,14 @@ var listCmd = &cobra.Command{
 	Short: "List all files in the specified directory",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := filepath.Walk(listDirPath, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-			if !info.IsDir() {
-				fmt.Println(path)
-			}
-			return nil
-		})
+		files, err := ioutil.ReadDir(listDirPath)
 		if err != nil {
 			fmt.Println(err)
+		}
+		for _, file := range files {
+			if !file.IsDir() {
+				fmt.Println(file.Name())
+			}
 		}
 	},
 }
